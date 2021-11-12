@@ -1,0 +1,11 @@
+{
+  "name": "gb-node",
+  "version": "1.0.0",
+  "description": "Lessons of Node.js from GB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mifort",
+  "license": "ISC"
+}
