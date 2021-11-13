@@ -8,7 +8,7 @@ let num = +process.argv[2];
 let top = +process.argv[3];
 const onError = () => {
     const errorMessage = new Error('Argument - Not a number!!!!!!');
-    console.error(errorMessage.message);
+    console.error(colors.red(errorMessage.message));
     return process.exit(1);
 }
 
