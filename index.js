@@ -41,7 +41,7 @@ if ((typeof (num) === "number") && (typeof (top) === "number") && (!isNaN(num)) 
 }
 else { onError() };
 const primeNumberColor = (number) => {
-    number ? count : count = 4;
+    number ? count : count = 0;
     switch (count) {
         case 1:
             console.log(colors.green(number));
@@ -56,10 +56,8 @@ const primeNumberColor = (number) => {
             console.log(colors.red(number));
             count = count - prevCount;
             break;
-        case 4:
-            console.log(colors.red("No prime numbers!"));
-            break;
         default:
+            console.log(colors.red("No prime numbers!"));
             break;
 
     }
