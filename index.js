@@ -1,69 +1,56 @@
-const colors = require("colors/safe");
-let count = 1;
-let prevCount;
-let step = 2;
-const primeNumbers = [];
 
-let num = +process.argv[2];
-let top = +process.argv[3];
-const onError = () => {
-    const errorMessage = new Error('Argument - Not a number!!!!!!');
-    console.error(errorMessage.message);
-    return process.exit(1);
+
+// console.log('Record 1'); // 1
+
+// setTimeout(() => {
+//     console.log('Record 2'); // 4
+//     Promise.resolve().then(() => {
+//         setTimeout(() => {
+//             console.log('Record 3'); // 5
+//             Promise.resolve().then(() => {
+//                 console.log('Record 4'); // 6
+//             });
+//         });
+//     });
+// });
+
+// console.log('Record 5'); // 2
+
+// Promise.resolve().then(() => Promise.resolve().then(() => console.log('Record 6'))); // 3
+const EventEmitter = require('events');
+const emitter = new EventEmitter();
+
+// Params mm/dd/yyyy hh:mm:ss - ex.11/18/2021 01:31:00
+const params = process.argv[2] + ' ' + process.argv[3];
+const generateCountdown = () => {
+    const stopTime = new Date(params);
+    const currentTime = new Date();
+    return countdown = stopTime - currentTime;
 }
 
-const primeNumbersFilter = () => {
-    while (num <= top) {
-        if (num <= 2) {
-            if (num <= 1) ++num;
-            else {
-                primeNumbers.push(num);
-                ++num
-            };
-        }
-        else if (num % step === 0 && num > step) {
-            step = 2;
-            ++num;
-        }
-        else if (num % step != 0) {
-            step++;
-        }
-        else if (num === step) {
-            primeNumbers.push(num);
-            ++num;
-            step = 2;
-        }
+const createNewCountdown = async () => {
+    emitter.emit('TimeLeft', new Date(generateCountdown()));
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await createNewCountdown();
+}
 
+class Handler {
+    static hours = (countdown) => {
+
+        countdown / 3600000 >= 1 ? console.log('hours:', Math.floor(countdown / 3600000)) : console.log("Timer is over!");
+    }
+    static minutes(countdown) {
+
+        countdown / 60000 >= 1 ? console.log('minutes:', Math.floor((countdown / 3600000 - Math.floor(countdown / 3600000)) * 60)) : console.log("Timer is over!");
+    }
+    static seconds(countdown) {
+
+        countdown >= 1 ? console.log('seconds:', Math.floor((countdown % 60000) / 1000)) : console.log("Timer is over!");
     }
 }
-if ((typeof (num) === "number") && (typeof (top) === "number") && (!isNaN(num)) && (!isNaN(top))) {
-    primeNumbersFilter();
-}
-else { onError() };
-const primeNumberColor = (number) => {
-    number ? count : count = 0;
-    switch (count) {
-        case 1:
-            console.log(colors.green(number));
-            count++;
-            break;
-        case 2:
-            console.log(colors.yellow(number));
-            prevCount = count;
-            count++;
-            break;
-        case 3:
-            console.log(colors.red(number));
-            count = count - prevCount;
-            break;
-        default:
-            console.log(colors.red("No prime numbers!"));
-            break;
 
-    }
-
-}
-
-
-primeNumbers.length > 0 ? primeNumbers.map((number) => primeNumberColor(number)) : primeNumberColor(false);
+emitter.on('TimeLeft', Handler.hours);
+emitter.on('TimeLeft', Handler.minutes);
+emitter.on('TimeLeft', Handler.seconds);
+createNewCountdown();
 
