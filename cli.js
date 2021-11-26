@@ -43,7 +43,8 @@ const ask = () => {
             ask();
           });
       } else if (fs.lstatSync(dir).isDirectory()) {
-        currentDirectory = `${currentDirectory}\\${answer.filePath}`;
+        currentDirectory = path.join(currentDirectory, answer.filePath);
+        //`${currentDirectory}\\${answer.filePath}`;
         ask();
       } else if (isFile(dir)) {
         const filePath = path.join(currentDirectory, answer.filePath);
