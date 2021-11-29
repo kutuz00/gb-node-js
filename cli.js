@@ -5,6 +5,7 @@ const path = require("path");
 const inquirer = require("inquirer");
 
 let currentDirectory = process.cwd();
+const fs = require("fs");
 
 const dirReader = (currentDirectory) => {
   const list = fs.readdirSync(currentDirectory);
