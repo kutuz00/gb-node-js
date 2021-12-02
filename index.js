@@ -1,45 +1,39 @@
-const server = require("http");
+const socket = require("socket.io");
+const http = require("http");
 const path = require("path");
-const url = require("url");
 const fs = require("fs");
-const currentDirectory = process.cwd();
+const randomName = require("node-random-name");
 
-const app = server.createServer((req, res) => {
-  const requestFile = path.join(currentDirectory, req.url);
-  const urlReq = url.pathToFileURL(requestFile);
+const server = http.createServer((req, res) => {
+  const indexPath = path.join(__dirname, "./index.html");
+  const readStream = fs.createReadStream(indexPath);
 
-  fs.access(urlReq, fs.constants.R_OK, (err) => {
-    if (err) {
-      res.writeHead(404, {
-        "Content-Type": "text/html; charset=utf-8",
-      });
+  readStream.pipe(res);
+});
 
-      res.write("File not exists!!!");
-    } else {
-      if (fs.lstatSync(urlReq.pathname).isDirectory()) {
-        const data = fs.readdirSync(urlReq.pathname);
-        res.writeHead(200, {
-          "Content-Type": "text/html; charset=utf-8",
-        });
-        data.map((filePath) => {
-          res.write(
-            `<p><a href=${path.join(req.url, filePath)}>${filePath}</a></p>`
-          );
-        });
-      } else if (fs.lstatSync(requestFile).isFile()) {
-        const file = fs.readFileSync(requestFile);
-        res.writeHead(200, {
-          "Content-Type": "text/javascript; charset=utf-8",
-        });
+const io = socket(server);
 
-        res.write(file);
-      }
-    }
-    res.end();
+io.on("connection", (client) => {
+  const clients = [];
+  clients.push({
+    id: client.id,
+    clientName: randomName(),
+  });
+  const lastConnected = clients[clients.length - 1].clientName;
+  console.log(`clien ${lastConnected} connected`);
+  client.on("client-msg", (data) => {
+    const payload = {
+      message: data.message.split("").reverse().join(""),
+    };
+
+    client.broadcast.emit("server-msg", payload);
+    client.emit("server-msg", payload);
+  });
+  client.broadcast.emit("newClient", lastConnected);
+  client.on("disconnecting", (reason) => {
+    const payload = clients.map((client) => client.clientName);
+    client.broadcast.emit("user-left", payload);
   });
 });
 
-app.listen(5555, (error) => {
-  if (error) console.log("Something went wrong: ", error);
-  else console.log("Server started on port 5555");
-});
+server.listen(5555);

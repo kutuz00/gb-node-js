@@ -15,7 +15,9 @@
   "dependencies": {
     "colors": "^1.4.0",
     "express": "^4.17.1",
-    "inquirer": "^8.2.0"
+    "inquirer": "^8.2.0",
+    "node-random-name": "^1.0.1",
+    "socket.io": "^4.4.0"
   },
   "devDependencies": {
     "eslint": "^8.2.0",
